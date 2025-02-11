@@ -1,0 +1,40 @@
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clearview</title>
+    <link href="{% static 'designer/windowMain.css' %}" rel="stylesheet">
+<body>
+</head>
+<body>
+    <div class="navbar">CLEARVIEW</div>
+    <div class="container">
+        <div class="sidebar">
+            <div class="window">Window 1 <button class="add-btn">+</button></div>
+            <div class="window">Window 2 <button class="add-btn">+</button></div>
+            <div class="window">Window 3 <button class="add-btn">+</button></div>
+            <div class="window">Window 4 <button class="add-btn">+</button></div>
+            <button class="add-btn" style="width: 100%; margin-top: 10px;">Add Window</button>
+        </div>
+        <div class="content">
+            <label class="upload-box">
+                <img src="images/profile.png" id="upload-pic">
+                <label for="input-file"></label>
+                    <input type="file" accepted="image/jpeg, image/jpg, image/png" id="input-file">
+                    Click to Upload Image
+            </label>
+        </div>
+    </div>
+
+    <script>
+       let image = document.getElementById("upload-pic"); 
+       let input_file = document.getElementById("input-file")
+
+       input_file.onchange = function(){
+        uploadPic.src = URL.createObjectURL(input_file.files[0]);
+       }
+    </script>
+</body>
+</html>
