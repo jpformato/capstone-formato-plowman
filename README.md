@@ -6,7 +6,7 @@ pip install coverage </br>
 
 ## Running The Program
 In \src\App\website enter: </br>
-python manage.py run </br>
+python manage.py runserver </br>
 Then go to your browser and go to: localhost:8000
 
 ## Database
