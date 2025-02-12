@@ -9,7 +9,7 @@ def create_person(attributes):
     password = attributes['password']
     department = attributes['department']
 
-    Person.objects.create(
+    person = Person.objects.create(
         first_name = first_name,
         last_name = last_name,
         email = email,
@@ -17,6 +17,8 @@ def create_person(attributes):
         password = password,
         department = department
     )
+
+    return person
 
 def read_person(email):
     """Read a person's attributes from the db"""
