@@ -1,6 +1,7 @@
 # capstone-formato-plowman
 
-## Installations
+**For Mac users, use "python3" instead of "python" for all instances**
+## Installations 
 pip install django psycopg2 </br>
 pip install coverage </br>
 
