@@ -28,3 +28,5 @@ coverage run manage.py test </br>
 
 To view the coverage report enter this command in the same directory: </br>
 coverage -m report </br>
+
+An image of the coverage report for each sprint will also be uploaded to the docs folder.
