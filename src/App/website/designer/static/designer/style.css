@@ -148,3 +148,15 @@ body {
 .nav-container input[type="checkbox"]:checked ~ .logo{
   display: none;
 }
+
+.new-customer-button button {
+  position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 20px;
+    color: white;
+    background-color: blue;
+    border: none;
+    border-radius: 10px;
+    padding: 5px;
+}
