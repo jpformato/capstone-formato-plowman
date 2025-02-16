@@ -1,15 +1,17 @@
 {% load static %}
 
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clearview</title>
-    <link href="{% static 'designer/windowMain.css' %}" rel="stylesheet">
-<body>
+    <title>ClearView</title>
+    <link href="{% static 'designer/CSS/windowMain.css' %}" rel="stylesheet">
 </head>
 <body>
-    <div class="navbar">CLEARVIEW</div>
+    <div class="navbar">
+        <a href="{% url 'index' %}">CLEARVIEW</a>
+    </div>
     <div class="container">
         <div class="sidebar">
             <div class="window">Window 1 <button class="add-btn">+</button></div>
@@ -19,22 +21,15 @@
             <button class="add-btn" style="width: 100%; margin-top: 10px;">Add Window</button>
         </div>
         <div class="content">
-            <label class="upload-box">
-                <img src="images/profile.png" id="upload-pic">
-                <label for="input-file"></label>
-                    <input type="file" accepted="image/jpeg, image/jpg, image/png" id="input-file">
-                    Click to Upload Image
+            <label for="input-file" id="upload-area">
+                <input type="file" accept="image/*" id="input-file" hidden>
+                <div id="img-view">
+                    <img src="{% static 'designer/Figures/upload.jpg' %}">
+                    <p>Click to Upload Image(s)</p>    
+                </div>
             </label>
         </div>
     </div>
-
-    <script>
-       let image = document.getElementById("upload-pic"); 
-       let input_file = document.getElementById("input-file")
-
-       input_file.onchange = function(){
-        uploadPic.src = URL.createObjectURL(input_file.files[0]);
-       }
-    </script>
+<script src="{% static 'designer/JS/upload.js'  %}"></script>
 </body>
 </html>

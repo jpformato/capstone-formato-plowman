@@ -6,7 +6,7 @@ body {
 
 .navbar {
     background-color: #0000ff;
-    color: gold;
+    text-decoration: none;
     padding: 15px;
     text-align: center;
     font-size: 24px;
@@ -47,6 +47,7 @@ body {
 
 .content {
     flex: 1;
+    background-color: white;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -62,7 +63,32 @@ body {
     text-align: center;
     cursor: pointer;
 }
-
-input[type="file"] {
-    display: none;
+#upload-area{
+    width: 98%;
+    height: 98%;  
+    background: white; 
+    text-align: center;
+    border-radius: 20px;
 }
+
+#img-view {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    border-radius: 0px;
+    border: 2px dashed black;
+    background: white;
+    justify-content: center;
+    align-items: center;
+    background-position: center;
+    background-size: cover;
+
+}
+
+#img-view img{
+    width: 120px;
+    height: 120px;
+    justify-items: center;
+    align-items: center;
+}
+
