@@ -5,20 +5,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ClearView</title>
+    <title>Window Designer</title>
     <link href="{% static 'designer/CSS/windowMain.css' %}" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="navbar">
-        <a href="{% url 'index' %}">CLEARVIEW</a>
+        <h1><a href="{% url 'menu' %}" style="text-decoration: none; color: white;">Window Designer</a></h1>
     </div>
     <div class="container">
         <div class="sidebar">
-            <div class="window">Window 1 <button class="add-btn">+</button></div>
-            <div class="window">Window 2 <button class="add-btn">+</button></div>
-            <div class="window">Window 3 <button class="add-btn">+</button></div>
-            <div class="window">Window 4 <button class="add-btn">+</button></div>
-            <button class="add-btn" style="width: 100%; margin-top: 10px;">Add Window</button>
+            <div class="window-list">
+                <div class="window">Window 1 <button class="add-btn">+</button></div>
+                <div class="window">Window 2 <button class="add-btn">+</button></div>
+                <div class="window">Window 3 <button class="add-btn">+</button></div>
+                <div class="window">Window 4 <button class="add-btn">+</button></div>
+                <div class="window">Window 5 <button class="add-btn">+</button></div>
+                <div class="window">Window 6 <button class="add-btn">+</button></div>
+                <div class="window">Window 7 <button class="add-btn">+</button></div>
+                <div class="window">Window 8 <button class="add-btn">+</button></div>
+                <div class="window">Window 9 <button class="add-btn">+</button></div>
+                <div class="window">Window 10 <button class="add-btn">+</button></div>
+                <div class="window">Window 11 <button class="add-btn">+</button></div>
+                <div class="window">Window 12 <button class="add-btn">+</button></div>
+                <div class="window">Window 13 <button class="add-btn">+</button></div>
+                <div class="window">Window 14 <button class="add-btn">+</button></div>
+                <div class="window">Window 15 <button class="add-btn">+</button></div>
+                <div class="window">Window 16 <button class="add-btn">+</button></div>
+                <div class="window">Window 17 <button class="add-btn">+</button></div>
+                <div class="window">Window 18 <button class="add-btn">+</button></div>
+                <div class="window">Window 19 <button class="add-btn">+</button></div>
+                <div class="window">Window 20 <button class="add-btn">+</button></div>
+            </div>
+            <button class="manual-add-btn">Add Window</button>
         </div>
         <div class="content">
             <label for="input-file" id="upload-area">

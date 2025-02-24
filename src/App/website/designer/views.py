@@ -9,6 +9,13 @@ def index(request):
 def windowMain(request):
     return render(request, 'windowMain.html', {})
 
+def login(request):
+    return render(request, 'login.html', {})
+
+def menu(request):
+    return render(request, 'menu.html', {})
+
+
 def create_customer(request):
     if request.method == 'POST':
         email = request.POST["email"]
