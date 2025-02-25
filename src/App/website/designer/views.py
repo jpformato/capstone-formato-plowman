@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .class_functions.person import read_person, check_new_password, update_person
+from .class_functions.project import create_project, read_project, update_project
 
 # Create your views here.
 def index(request):
@@ -27,12 +28,16 @@ def create_customer(request):
             messages.error(request, "Account already created")
             return render(request, "createCustomer.html")
         
-        person['first_name'] = first_name
-        person['last_name'] = last_name
-        person['username'] = username
-        person['password'] = password
+        attributes = {
+            'email'      : person.email,
+            'first_name' : first_name,
+            'last_name'  : last_name,
+            'username'   : username,
+            'password'   : password,
+            'department' : person.department,
+        }
 
-        saved = update_person(person)
+        saved = update_person(attributes)
         if not saved:
             messages.error(request, "Failed to create")
             return render(request, "createCustomer.html")
