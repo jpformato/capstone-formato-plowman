@@ -1,0 +1,24 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClearView Menu</title>
+  <link href="{% static 'designer/CSS/menu.css' %}" rel="stylesheet">
+</head>
+<body>
+    <div class="wrapper">
+        <img src="{% static 'designer/Figures/clearviewlogo1.png' %}" class="header-image"> 
+        <div class="container">
+            <a href="{% url 'windowMain' %}" class="square-btn">Window Designer</a>
+            <a href="page2.html" class="square-btn">My Jobs</a>
+            <a href="page3.html" class="square-btn">Job List</a>
+            <a href="page4.html" class="square-btn">Admin Panel</a>
+            <a href="page5.html" class="square-btn">Page 5</a>
+            <a href="page6.html" class="square-btn">Page 6</a>
+        </div>
+    </div>
+</body>
+</html>
