@@ -22,21 +22,12 @@ def create_person(attributes):
 
 def read_person(email):
     """Read a person's attributes from the db"""
-    person = Person.objects.filter(email=email).first()
+    try:
+        person = Person.objects.get(email=email)
+    except Person.DoesNotExist:
+        return None
 
-    if not person:
-        return False
-    
-    attributes = {
-        'first_name': person.first_name, 
-        'last_name': person.last_name,
-        'email': person.email, 
-        'username': person.username, 
-        'password': person.password,  
-        'department': person.department
-    }
-
-    return attributes
+    return person
 
 def update_person(attributes):
     """Update a person's attributes in the db"""
@@ -47,10 +38,10 @@ def update_person(attributes):
     password = attributes['password']
     department = attributes['department']
 
-    person = Person.objects.filter(email=email).first()
-
-    if not person:
-        return False
+    try:
+        person = Person.objects.get(email=email)
+    except Person.DoesNotExist:
+        return None
         
     person.first_name = first_name
     person.last_name = last_name
@@ -60,34 +51,34 @@ def update_person(attributes):
     person.department = department
     person.save()
 
-    return True
+    return person
 
 def delete_person_by_id(person_id):
     """Delete a person in the database by their id"""
-    person = Person.objects.filter(person_id=person_id).first()
-    
-    if person:
-        person.delete()
-        return True
-    else:
-        return False
+    try:
+        person = Person.objects.get(person_id=person_id)
+    except Person.DoesNotExist:
+        return None
+
+    person.delete()
+    return True
     
 def delete_person_by_email(email):
     """Delete a person in the database by their email"""
-    person = Person.objects.filter(email=email).first()
-    
-    if not person:
-        return False
+    try:
+        person = Person.objects.get(email=email)
+    except Person.DoesNotExist:
+        return None
     
     person.delete()
     return True
     
 def check_new_password(email):
     """Check if a person has a password"""
-    person = Person.objects.filter(email=email).first()
-
-    if not person:
-        return False
+    try:
+        person = Person.objects.get(email=email)
+    except Person.DoesNotExist:
+        return None
     
     if person.password:
         return False
