@@ -1,12 +1,17 @@
-const upload_area = document.getElementById("upload-area");
-const input_file = document.getElementById("input-file");
-const img_view = document.getElementById("img-view");
+document.addEventListener("DOMContentLoaded", function() {
+    const fileInput = document.getElementById('file-input');
+    const preview = document.getElementById('preview');
+    const uploadContainer = document.querySelector('.upload-container');
 
-input_file.addEventListener("change", uploadImage);
+    if (fileInput) {
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const imgURL = URL.createObjectURL(this.files[0]);
+                preview.src = imgURL;
 
-function uploadImage(){
-    let img_link = URL.createObjectURL(input_file.files[0]);
-    img_view.style.backgroundImage = `url(${img_link})`;
-    img_view.textContent = "";
-    img_view.style.border = 0;
-}
+                // Remove the dotted border when an image is uploaded
+                uploadContainer.classList.add('uploaded');
+            }
+        });
+    }
+});

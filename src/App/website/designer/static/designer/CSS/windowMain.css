@@ -1,3 +1,5 @@
+/* Existing styles … */
+
 body {
     font-family: 'Jost', sans-serif;
     margin: 0;
@@ -92,40 +94,45 @@ body {
     justify-content: center;
     align-items: center;
 }
-.upload-box {
-    width: 300px;
-    height: 300px;
-    border: 2px dashed #000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    cursor: pointer;
+
+
+.upload-container {
+    width: 200vw;             /* Scales with the viewport */
+    max-width: 1000px;        /* Maximum width */
+    margin: 40px auto;
+    position: relative;
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    overflow: hidden;
 }
-#upload-area{
-    width: 98%;
-    height: 98%;  
-    background: #fff; 
-    text-align: center;
-    border-radius: 20px;
+.upload-container::before {
+    content: "";
+    display: block;
+    padding-top: 56.25%;     /* 16:9 aspect ratio (adjust if needed) */
 }
-#img-view {
-    display: flex;
+.upload-container.uploaded {
+    border: none;
+}
+.upload-content {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    border-radius: 0px;
-    border: 2px dashed #000;
-    background: #fff;
-    justify-content: center;
-    align-items: center;
-    background-position: center;
-    background-size: cover;
-
 }
-#img-view img{
-    width: 120px;
-    height: 120px;
-    justify-items: center;
-    align-items: center;
+.upload-content img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
 }
-
+.upload-content input[type="file"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+}
