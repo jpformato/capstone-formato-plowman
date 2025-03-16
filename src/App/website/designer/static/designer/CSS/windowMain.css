@@ -66,16 +66,17 @@ body {
     border-radius: 5px;
     box-shadow: 2px 2px 5px rgb(0, 0, 255);
 }
-.window:hover .add-btn {
-    box-shadow: 0 0 10px blue;
+.window:hover .delete-window-btn {
+    box-shadow: 0 0 10px #ff0000;
     transition: box-shadow 0.3s ease;
 }
-.add-btn {
-    background: #ffffff;
-    color: #0000ff;
+.delete-window-btn {
+    background: #ff0000;
+    color: #000000;
     border: none;
     padding: 8px;
     border-radius: 5px;
+    box-shadow: #fff;
     cursor: pointer;
 }
 .clear-selection-btn {
