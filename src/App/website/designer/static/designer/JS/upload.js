@@ -15,11 +15,23 @@ let isDrawing = false;
 let rect, startX, startY;
 let rectangleCount = 0;
 let imageUploaded = false;
+let isMoving = false; // Flag to prevent drawing while moving objects (check first comment in each mouse event function)
 
 canvas.on("mouse:down", onMouseDown);
 canvas.on("mouse:move", onMouseMove);
 canvas.on("mouse:up", onMouseUp);
-canvas.on("mouse:dblclick", mouseDbClick);
+
+// Listen for when an object starts moving
+canvas.on("object:moving", function () {
+    isMoving = true;
+    console.log("Moving an object, preventing new drawing.");
+});
+
+// Listen for when an object stops moving
+canvas.on("object:modified", function () {
+    isMoving = false;
+    console.log("Object movement stopped.");
+});
 
 // Trigger file input when upload button is clicked
 uploadBtn.addEventListener("click", function () {
@@ -52,11 +64,11 @@ inputFile.addEventListener("change", function (e) {
 
 // Mouse Down - Start Drawing
 function onMouseDown(event) {
-    if (canvas.getActiveObject()) return;   // Disable drawing if an object is active
-    if (!imageUploaded) return;             // Ensure an image is uploaded before drawing
+    if (!imageUploaded || isMoving) return; // Ensure an image is uploaded before drawing
+
+    const pointer = canvas.getPointer(event);
 
     isDrawing = true;
-    const pointer = canvas.getPointer(event);
     startX = pointer.x;
     startY = pointer.y;
 
@@ -65,7 +77,7 @@ function onMouseDown(event) {
         top: startY,
         width: 0,
         height: 0,
-        fill: "transparent", // No fill, only border
+        fill: "transparent",
         stroke: "red",
         strokeWidth: 2,
         selectable: true,
@@ -77,7 +89,7 @@ function onMouseDown(event) {
 
 // Mouse Move - Update Rectangle Size
 function onMouseMove(event){
-    if (!isDrawing) return;
+    if (!isDrawing || isMoving) return;
     const pointer = canvas.getPointer(event);
     rect.set({
         width: Math.abs(pointer.x - startX),
@@ -90,10 +102,18 @@ function onMouseMove(event){
 
 // Mouse Up - Stop Drawing
 function onMouseUp(event) {
+    const pointer = canvas.getPointer(event);
+    
     isDrawing = false;
-    if (!imageUploaded) return; // Ensure an image is uploaded before finalizing the rectangle
+    if (!imageUploaded || isMoving) return; // Ensure an image is uploaded before finalizing the rectangle
 
-    rectangleCount++;
+    // Prevent creating window buttons for invalid rectangles (width or height too small) 
+    // Prevents creating a window on clicking and not dragging
+    if (rect.width < 5 || rect.height < 5) {
+        canvas.remove(rect);
+        canvas.renderAll();
+        return;
+    }
 
     // Assign a unique ID to the rectangle
     const rectId = `rect-${rectangleCount}`;
@@ -101,6 +121,10 @@ function onMouseUp(event) {
 
     // Store rectangle reference globally
     rectangleMap[rectId] = rect;
+
+    canvas.setActiveObject(rect);
+    canvas.renderAll();
+    console.log("Rectangle set as active object");
 
     // Create a new window button
     const newWindowButton = document.createElement("div");
@@ -122,6 +146,8 @@ function onMouseUp(event) {
     newWindowButton.appendChild(deleteButton);
     windowList.appendChild(newWindowButton);
 
+    rectangleCount++;
+
     // Add event listener to remove rectangle and button when clicked
     deleteButton.addEventListener("click", function () {
         const rectId = newWindowButton.dataset.rectId; // Get ID from dataset
@@ -132,27 +158,6 @@ function onMouseUp(event) {
             canvas.renderAll();
             newWindowButton.remove();
             delete rectangleMap[rectId];
-        }
-    });
-}
-
-// Double Click - Set Rectangle as Active Object if Clicked in Center
-function mouseDbClick(event) {
-    const pointer = canvas.getPointer(event);
-    canvas.getObjects().forEach(obj => {
-        if (obj.type === "rect") {
-            const centerX = obj.left + obj.width / 2;
-            const centerY = obj.top + obj.height / 2;
-            const tolerance = Math.min(obj.width, obj.height) * 0.25;
-            
-            if (
-                Math.abs(pointer.x - centerX) <= tolerance &&
-                Math.abs(pointer.y - centerY) <= tolerance
-            ) {
-                canvas.setActiveObject(obj);
-                canvas.renderAll();
-                console.log("Rectangle set as active object");
-            }
         }
     });
 }
