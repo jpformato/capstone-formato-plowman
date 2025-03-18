@@ -67,10 +67,20 @@ function onMouseDown(event) {
     if (!imageUploaded || isMoving) return; // Ensure an image is uploaded before drawing
 
     const pointer = canvas.getPointer(event);
+    const activeObject = canvas.getActiveObject();
+
+    // If an existing rectangle is being resized, do not create a new one
+    if (activeObject && activeObject.type === "rect") {
+        console.log("Resizing existing rectangle, not drawing a new one.");
+        return; 
+    }
 
     isDrawing = true;
     startX = pointer.x;
     startY = pointer.y;
+
+    console.log("Pointer:", pointer.x, pointer.y); // Debugging output
+
 
     rect = new fabric.Rect({
         left: startX,
@@ -106,6 +116,13 @@ function onMouseUp(event) {
     
     isDrawing = false;
     if (!imageUploaded || isMoving) return; // Ensure an image is uploaded before finalizing the rectangle
+
+    // If resizing an existing rectangle, do nothing
+    const activeObject = canvas.getActiveObject();
+    if (activeObject && activeObject.type === "rect" && activeObject.id) {
+        console.log("Resized an existing rectangle. No new button created.");
+        return;
+    }
 
     // Prevent creating window buttons for invalid rectangles (width or height too small) 
     // Prevents creating a window on clicking and not dragging
