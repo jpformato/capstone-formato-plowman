@@ -1,9 +1,10 @@
-from ..models import Project, Person
-from .person import read_person
+from ..models import Project
+# from .person import read_person
+from django.contrib.auth.models import User
 
 def create_project(attributes):
     """Create a project"""
-    customer = read_person(attributes['customer_email'])
+    customer = User.objects.filter(email=attributes['customer_email']).first()
     if customer is None:
         return None
 
@@ -29,7 +30,7 @@ def update_project(attributes):
     except Project.DoesNotExist:
         return None
     
-    new_customer = read_person(attributes['customer_email'])
+    new_customer = User.objects.filter(email=attributes['customer_email']).first()
     if new_customer is None:
         return None
     

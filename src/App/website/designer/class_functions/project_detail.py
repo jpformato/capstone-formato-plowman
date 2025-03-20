@@ -41,7 +41,7 @@ def delete_project_detail(project_detail_id):
     try:
         project_detail = Project_Detail.objects.get(project_detail_id=project_detail_id)
     except Project_Detail.DoesNotExist:
-        return False
+        return None
     
     project_detail.delete()
     return True

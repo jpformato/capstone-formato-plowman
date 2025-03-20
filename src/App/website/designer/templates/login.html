@@ -14,7 +14,8 @@
 	<div class="main">  
 		<input type="checkbox" id="chk" aria-hidden="true">
 		<div class="login">
-			<form>
+			<form method="POST" action="">
+				{% csrf_token %}
                 <h1><a href="{% url 'menu' %}" style="text-decoration: none; color: inherit;">Welcome</a></h1>
 				<input type="email" name="email" placeholder="Email" required="">
 				<input type="password" name="pswd" placeholder="Password" required="">
