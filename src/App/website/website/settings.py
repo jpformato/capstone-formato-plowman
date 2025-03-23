@@ -136,6 +136,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTHENTICATION_BACKENDS = [
     #'designer.auth_backend.PersonBackend',
     # Optionally, include Django’s default backend if you plan to use it elsewhere:
+    'designer.authentication.EmailAuthBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
 

@@ -21,6 +21,6 @@ urlpatterns = [
     path('index/', views.index, name='index'),
     path('windowMain/', views.windowMain, name='windowMain'),
     # path('createCustomer/', views.create_customer, name='create_customer'),
-    path('', views.login, name='login'),
+    path('', views.login_view, name='login'),
     path('menu/', views.menu, name='menu')
 ]
