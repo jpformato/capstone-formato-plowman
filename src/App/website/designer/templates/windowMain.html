@@ -12,7 +12,9 @@
 </head>
 <body>
     <div class="navbar">
-        <h1><a href="{% url 'menu' %}" style="text-decoration: none; color: white;">Window Designer</a></h1>
+        <a href="{% url 'menu' %}">
+            <img src="{% static 'designer/Figures/clearview-white-logo.png' %}" class="navbar-logo">
+        </a>        
     </div>
     <div class="container">
         <div class="sidebar">
