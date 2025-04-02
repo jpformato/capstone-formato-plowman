@@ -1,21 +1,17 @@
-from ..models import Window, Project_Detail
-from .project_detail import read_project_detail
+from ..models import Window, Preview
+from .preview import read_preview
 
-def create_window(attributes):
-    project_detail = read_project_detail(attributes['project_detail_id'])
-    if project_detail is None:
+def create_window(preview_id, x1, y1, x2, y2):
+    preview = read_preview(preview_id)
+    if preview is None:
         return None
-    x1 = attributes['x1']
-    y1 = attributes['y1']
-    x2 = attributes['x2']
-    y2 = attributes['y2']
 
     window = Window.objects.create(
         x1 = x1,
         y1 = y1,
         x2 = x2,
         y2 = y2,
-        project_detail_id = project_detail
+        preview = preview
     )
 
     return window
@@ -28,18 +24,22 @@ def read_window(window_id):
     
     return window
 
-def update_window(attributes):
+def update_window(window_id, x1=None, y1=None, x2=None, y2=None):
     try:
-        window = Window.objects.get(window_id=attributes['window_id'])
+        window = Window.objects.get(window_id=window_id)
     except Window.DoesNotExist:
         return None
     
-    window.x1 = attributes['x1']
-    window.y1 = attributes['y1']
-    window.x2 = attributes['x2']
-    window.y2 = attributes['y2']
-    window.save()
+    if x1 is not None:
+        window.x1 = x1
+    if y1 is not None:
+        window.y1 = y1
+    if x2 is not None:
+        window.x2 = x2
+    if y2 is not None:
+        window.y2 = y2
 
+    window.save()
     return window
 
 def delete_window(window_id):
