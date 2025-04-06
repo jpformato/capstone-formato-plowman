@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Progress Bar</title>
+    <link href="{% static 'designer/CSS/stepper.css' %}" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Inject project ID -->
+    <script>
+        const PROJECT_ID = "{{ project.project_id }}";
+    </script>
+
+    {{ progress|json_script:"progress-json" }}
+
+    <div class="banner">
+        <img src="{% static 'designer/Figures/clearview-std-logo.png' %}" alt="Top Banner" class="logo">
+    </div>
+
+    <div class="container">
+        <div class="steps">
+            <div class="circle"><span class="step-number">Contract</span><span class="step-icon"></span></div>
+            <div class="circle"><span class="step-number">Final Measure</span><span class="step-icon"></span></div>
+            <div class="circle"><span class="step-number">Order</span><span class="step-icon"></span></div>
+            <div class="circle"><span class="step-number">ETA</span><span class="step-icon"></span></div>
+            <div class="circle"><span class="step-number">Installation</span><span class="step-icon"></span></div>
+
+            <div class="progress-bar">
+                <span class="indicator"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Step Info</h2>
+            <form id="stepForm">
+                <label for="dateStarted">Date Started (MM/DD/YY):</label>
+                <input type="text" id="dateStarted" name="dateStarted" placeholder="MM/DD/YY"><br><br>
+
+                <label for="dateCompleted">Date Completed (MM/DD/YY):</label>
+                <input type="text" id="dateCompleted" name="dateCompleted" placeholder="MM/DD/YY"><br><br>
+
+                <label for="notes">Notes:</label><br>
+                <textarea id="notes" name="notes" rows="4" cols="30" placeholder="Enter notes here..."></textarea><br><br>
+
+                <div style="text-align: right;">
+                    <button type="submit" id="updateBtn">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="{% static 'designer/JS/stepper.js' %}"></script>
+</body>
+</html>
