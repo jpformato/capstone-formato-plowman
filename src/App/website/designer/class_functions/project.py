@@ -3,6 +3,7 @@ from .customer import read_customer_email
 from django.contrib.auth.models import User
 import uuid
 
+# Contract, Final Measure, Order, ETA, Installation, <-- Upon the completion of installation marks the completion of the project
 statuses = ['Created', 'Viewed', 'Accepted', 'Final Measurements', 'Final Review', 'Order Placed', 'In Production',
             'Order Recieved', 'Installation in Progress', 'Complete']
 
