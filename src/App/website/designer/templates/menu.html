@@ -21,5 +21,39 @@
             <a href="page6.html" class="square-btn">Page 6</a>
         </div>
     </div>
+    <div class="profile-dropdown">
+        <div class="profile-initials" id="profileToggle">
+            <div class="profile-initials">
+                {{ user.first_name|first }}{{ user.last_name|first }}
+              </div>
+        </div>
+        <div class="dropdown-content" id="dropdownContent">
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="logout-btn">Log out</button>
+            </form>
+        </div>
+    </div>    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          const toggle = document.getElementById('profileToggle');
+          const dropdown = document.getElementById('dropdownContent');
+      
+          toggle.addEventListener('click', function (e) {
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+            e.stopPropagation(); // Prevent click from bubbling to document
+          });
+      
+          // Close dropdown when clicking outside
+          document.addEventListener('click', function () {
+            dropdown.style.display = 'none';
+          });
+      
+          // Prevent dropdown from closing when clicking inside
+          dropdown.addEventListener('click', function (e) {
+            e.stopPropagation();
+          });
+        });
+      </script>      
 </body>
 </html>

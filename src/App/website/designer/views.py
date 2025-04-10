@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from .class_functions.project import create_project, read_project, update_project
 from .models import Project, ProjectStatus, Status
 from django.views.decorators.http import require_POST
@@ -75,6 +75,10 @@ def login_view(request):
             return redirect('/')
         
     return render(request, 'login.html', {})
+
+def logout_view(request):
+    logout(request)
+    return redirect('/')
 
 def menu(request):
     return render(request, 'menu.html', {})

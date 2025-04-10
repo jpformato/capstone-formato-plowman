@@ -49,3 +49,54 @@ body {
     transform: scale(1.05);
   }
   
+
+
+  .profile-dropdown {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: inline-block;
+    z-index: 1000;
+}
+
+.profile-initials {
+    width: 40px;
+    height: 40px;
+    background-color: #ffffff33; /* semi-transparent white */
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-family: 'Jost', sans-serif;
+    cursor: pointer;
+    user-select: none;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 50px;
+    background-color: white;
+    min-width: 120px;
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.logout-btn {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    font-family: 'Jost', sans-serif;
+}
+
+.logout-btn:hover {
+    background-color: #d32f2f;
+}

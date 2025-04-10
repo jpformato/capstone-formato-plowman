@@ -9,5 +9,5 @@ urlpatterns = [
     path('menu/', views.menu, name='menu'),
     path('progressbar/<int:project_id>/', views.progressbar, name='progressbar'),
     path('progress/update/', views.update_project_status, name='update_project_status'),
-
+    path('logout/', views.logout_view, name='logout')
 ]

@@ -34,8 +34,8 @@ class Project(models.Model):
 class ProjectStatus(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     status = models.ForeignKey(Status, on_delete=models.CASCADE)
-    start_date = models.DateField(auto_now_add=True)
-    end_date = models.DateTimeField(null=True, blank=True)
+    start_date = models.DateField(auto_now_add=True, null=True)
+    end_date = models.DateField(null=True, blank=True)
     notes = models.TextField(blank=True)
 
     class Meta:
@@ -57,9 +57,13 @@ class Preview(models.Model):
     detail = models.ForeignKey(Project_Detail, on_delete=models.CASCADE,
                                 related_name="previews")
 
+class Frame(models.Model):
+    frame_id = models.AutoField(primary_key=True)
+    image = models.BinaryField(null=True)
+
 class Window(models.Model):
     window_id = models.AutoField(primary_key=True)
-    # frame = models.ForeignKey(Frame)
+    frame = models.ForeignKey(Frame, on_delete=models.CASCADE, related_name="windows", null=True)
     x1 = models.IntegerField()
     y1 = models.IntegerField()
     x2 = models.IntegerField()
