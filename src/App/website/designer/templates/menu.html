@@ -24,7 +24,14 @@
     <div class="profile-dropdown">
         <div class="profile-initials" id="profileToggle">
             <div class="profile-initials">
-                {{ user.first_name|first }}{{ user.last_name|first }}
+                {% with user.first_name|default:'' as first %}
+                {% with user.last_name|default:'' as last %}
+                    {{ first|slice:":1" }}{{ last|slice:":1" }}
+                    {% if first == '' and last == '' %}
+                        U
+                    {% endif %}
+                {% endwith %}
+                {% endwith %}
               </div>
         </div>
         <div class="dropdown-content" id="dropdownContent">
