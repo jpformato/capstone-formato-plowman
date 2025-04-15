@@ -4,8 +4,7 @@ from django.contrib.auth.models import User
 import uuid
 
 # Contract, Final Measure, Order, ETA, Installation, <-- Upon the completion of installation marks the completion of the project
-statuses = ['Created', 'Viewed', 'Accepted', 'Final Measurements', 'Final Review', 'Order Placed', 'In Production',
-            'Order Recieved', 'Installation in Progress', 'Complete']
+statuses = ['Contract', 'Final Measure', 'Order', 'ETA', 'Installation']
 
 def create_project(customer_email, employee_id):
     """Create a project"""
@@ -90,39 +89,43 @@ def generate_tracking_number():
         if not Project.objects.filter(tracking_number=tracking_number).exists():
             return tracking_number
 
+# set connection to statuses and generate tracking number
 def start_project(project_id):
     try: 
         project = Project.objects.get(project_id=project_id)
     except Project.DoesNotExist:
         return None
     
-    if project.statuses.count() == 0:
-        status = Status.objects.get(name=statuses[0])
+    if project.statuses.count() > 0 and project.statuses.count() < 5:
+        project.statuses.clear()
+    
+    for status in statuses:
+        status = Status.objects.get(name=status)
         project.statuses.add(status)
 
-        project.tracking_number = generate_tracking_number()
-        project.save()
+    project.tracking_number = generate_tracking_number()
+    project.save()
     
     return project
 
-def next(project_id):
-    try:
-        project = Project.objects.get(project_id=project_id)
-    except Project.DoesNotExist:
-        return None
+# def next(project_id):
+#     try:
+#         project = Project.objects.get(project_id=project_id)
+#     except Project.DoesNotExist:
+#         return None
     
-    if project.statuses is None:
-        start_project(project_id)
-        return True
+#     if project.statuses is None:
+#         start_project(project_id)
+#         return True
     
-    status_count = project.statuses.count()
-    if status_count == statuses.length:
-        return None
-    else:
-        try:
-            status = Status.objects.get(name=statuses[status_count])
-        except Project.DoesNotExist:
-            return None
-        project.statuses.add(status)
+#     status_count = project.statuses.count()
+#     if status_count == statuses.length:
+#         return None
+#     else:
+#         try:
+#             status = Status.objects.get(name=statuses[status_count])
+#         except Project.DoesNotExist:
+#             return None
+#         project.statuses.add(status)
 
-    return project
+#     return project
