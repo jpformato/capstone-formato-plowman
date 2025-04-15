@@ -191,6 +191,52 @@ form.onsubmit = function (e) {
         }
     });    
 
+    // Email Creation Logic
+    const stepName = document.querySelectorAll(".step-number")[activeStepIndex].textContent.trim();
+
+    // Create email body based on the update to project
+    let updateMessage = "";
+
+    // Only show what actually changed
+    const startedChanged = started !== progressData[stepName]?.start_date;
+    const completedChanged = completed !== progressData[stepName]?.end_date;
+    const notesChanged = notes && notes !== (progressData[stepName]?.notes);
+    
+    if (startedChanged) {
+        updateMessage += `Step "${stepName}" was started on ${started}.`;
+    }
+    
+    if (completedChanged) {
+        if (updateMessage) updateMessage += "\n\n";
+        updateMessage += `Step "${stepName}" was completed on ${completed}.`;
+    }
+    
+    if (notesChanged) {
+        if (updateMessage) updateMessage += "\n\n";
+        updateMessage += `Notes for step "${stepName}": ${notes}`;
+    }
+
+    // Send the Email 
+    emailjs.send("service_h71srho", "template_zxuz93z", {
+        email: "cmplowman@loyola.edu",  // The person who should receive the email
+        reply_to: "cmplowman@loyola.edu",  // Shows up when they click Reply
+        project_id: PROJECT_ID,
+        update_message: updateMessage,     
+    })
+    .then((response) => {
+        console.log("Email sent:", response.status, response.text);
+    })
+    .catch((error) => {
+        console.error("EmailJS error:", error);
+    }); 
+    
+    // Update progressData for immediate UI sync
+    progressData[stepName] = {
+        start_date: started,
+        end_date: completed,         
+        notes: notes                 
+    };
+    
     modal.style.display = "none";
     updateStepUI();
 };

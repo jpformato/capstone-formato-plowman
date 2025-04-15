@@ -34,9 +34,9 @@ class Project(models.Model):
 class ProjectStatus(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     status = models.ForeignKey(Status, on_delete=models.CASCADE)
-    start_date = models.DateField(auto_now_add=True, null=True)
+    start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
-    notes = models.TextField(blank=True)
+    notes = models.TextField(null=True, blank=True)
 
     class Meta:
         unique_together = ('project', 'status', 'start_date')
