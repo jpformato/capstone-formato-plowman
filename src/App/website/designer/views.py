@@ -2,13 +2,16 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from .class_functions.project import create_project, read_project, update_project
-from .models import Project, ProjectStatus, Status
+from .class_functions.preview import create_preview, read_preview
+from .class_functions.window import create_window, read_window
+from .models import Project, ProjectStatus, Status, Frame, Project_Detail, Preview, Window
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
 from django.utils.dateparse import parse_date
 from datetime import datetime
+import base64
 
 @require_POST
 @csrf_exempt
@@ -63,7 +66,6 @@ def login_view(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('pswd')
-        print(email)
 
         user = authenticate(request, username=email, password=password)
 
@@ -81,6 +83,17 @@ def logout_view(request):
     return redirect('/')
 
 def menu(request):
+    if request.method == 'POST':
+        customer_email = request.POST.get('customer_email')
+        employee_id = request.user.id
+
+        project = create_project(customer_email=customer_email, employee_id=employee_id)
+        if project is None:
+            messages.error(request, "Failed to create project")
+            return redirect('menu')
+        else:
+            request.session['project_id'] = project.project_id
+            return redirect('windowMain')
     return render(request, 'menu.html', {})
 
 def progressbar(request, project_id):
@@ -104,3 +117,74 @@ def progressbar(request, project_id):
         'progress': progress_dict,
     }
     return render(request, 'progressbar.html', context)
+
+def get_frames(request):
+    frames = Frame.objects.all()
+    frame_data = []
+    for frame in frames:
+        if frame.image:
+            image_data = base64.b64encode(frame.image).decode('utf-8')
+            frame_data.append({
+                'id': frame.frame_id,
+                'name': frame.name,
+                'image': f'data:image/png;base64,{image_data}',
+            })
+    return JsonResponse({'frames': frame_data})
+
+def upload_image(request):
+    if request.method == 'POST' and request.FILES.get('image'):
+        image = request.FILES['image']
+        image_bytes = image.read()
+        project_id = request.session['project_id']
+
+        project = read_project(project_id)
+        if project is None:
+            return JsonResponse({'success': False, 'error': 'Project not found'}, status=404)
+
+        # Check if image exists
+        existing_detail = Project_Detail.objects.filter(
+            project=project,
+            image=image_bytes
+        ).first()
+
+        if existing_detail:
+            request.session['detail_id'] = existing_detail.project_detail_id
+            return JsonResponse({'success': True, 'message': 'Image already exists'})
+
+        detail = Project_Detail.objects.create(
+            project=project,
+            image=image_bytes
+        )
+
+        request.session['detail_id'] = detail.project_detail_id
+        return JsonResponse({'success': True, 'message': 'Image uploaded successfully'})
+
+    return JsonResponse({'success': False, 'error': 'No image uploaded'}, status=400)
+
+def save_windows(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            windows = data.get('windows', [])
+            preview = create_preview(request.session['detail_id']) # or however you fetch this
+            if preview is None:
+                return JsonResponse({'success': False,'error': 'Could not create or retrieve preview.'}, status=400)
+
+
+            # Loop through the windows data and save each one
+            print(windows)
+            for window in windows:
+                create_window(
+                    preview_id=preview.preview_id,  # Assign the correct preview
+                    x1=window['x1'],
+                    y1=window['y1'],
+                    x2=window['x2'],
+                    y2=window['y2'],
+                    frame_id=window['frameId'],
+                )
+            print("YES")
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)}, status=400)
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request'}, status=400)

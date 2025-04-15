@@ -1,5 +1,5 @@
 from ..models import Project, Customer, Status, ProjectStatus
-from .customer import read_customer_email
+from .customer import read_customer_email, create_customer
 from django.contrib.auth.models import User
 import uuid
 
@@ -11,7 +11,7 @@ def create_project(customer_email, employee_id):
     """Create a project"""
     customer = read_customer_email(customer_email)
     if customer is None:
-        return None
+        customer = create_customer(email=customer_email)
     
     try:
         employee = User.objects.get(id=employee_id)
@@ -106,7 +106,7 @@ def start_project(project_id):
     return project
 
 def next(project_id):
-    try: 
+    try:
         project = Project.objects.get(project_id=project_id)
     except Project.DoesNotExist:
         return None
@@ -119,7 +119,7 @@ def next(project_id):
     if status_count == statuses.length:
         return None
     else:
-        try: 
+        try:
             status = Status.objects.get(name=statuses[status_count])
         except Project.DoesNotExist:
             return None

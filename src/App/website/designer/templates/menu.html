@@ -10,10 +10,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap" rel="stylesheet">
 </head>
 <body>
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
     <div class="wrapper">
         <img src="{% static 'designer/Figures/clearview-white-logo.png' %}" class="header-image"> 
         <div class="container">
-            <a href="{% url 'windowMain' %}" class="square-btn">Window Designer</a>
+            <!-- <a href="{% url 'windowMain' %}" class="square-btn">Window Designer</a> -->
+            <a href="javascript:void(0)" id="window-designer" class="square-btn">Window Designer</a>
             <a href="page2.html" class="square-btn">My Jobs</a>
             <a href="page3.html" class="square-btn">Job List</a>
             <a href="page4.html" class="square-btn">Admin Panel</a>
@@ -22,11 +30,12 @@
         </div>
     </div>
     <div class="profile-dropdown">
-        <div class="profile-initials" id="profileToggle">
+        <div class="profile-initials" id="profile-toggle">
             <div class="profile-initials">
                 {% with user.first_name|default:'' as first %}
                 {% with user.last_name|default:'' as last %}
                     {{ first|slice:":1" }}{{ last|slice:":1" }}
+                    <!-- default to U if there is no name -->
                     {% if first == '' and last == '' %}
                         U
                     {% endif %}
@@ -34,17 +43,37 @@
                 {% endwith %}
               </div>
         </div>
-        <div class="dropdown-content" id="dropdownContent">
+        <div class="dropdown-content" id="dropdown-content">
             <form method="post" action="{% url 'logout' %}">
                 {% csrf_token %}
                 <button type="submit" class="logout-btn">Log out</button>
             </form>
         </div>
-    </div>    
+    </div>
+    <div id="new-project" class="popup-overlay hidden">
+        <div class="popup-content">
+            <span id="popup-close" class="popup-close">&times;</span>
+            <h3>New Project</h3>
+            <form method="post" action="{% url 'menu' %}">
+                {% csrf_token %}
+                <input 
+                  type="email" 
+                  name="customer_email" 
+                  placeholder="Customer Email" 
+                  required 
+                  style="padding: 8px; margin: 10px 0; width: 100%; border-radius: 5px; border: 1px solid #ccc;"
+                >
+                <button type=submit>Create</button>
+            </form>
+        </div>
+    </div>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-          const toggle = document.getElementById('profileToggle');
-          const dropdown = document.getElementById('dropdownContent');
+          const toggle = document.getElementById('profile-toggle');
+          const dropdown = document.getElementById('dropdown-content');
+          const designer = document.getElementById('window-designer');
+          const newProject = document.getElementById('new-project');
+          const close = document.getElementById('popup-close');
       
           toggle.addEventListener('click', function (e) {
             dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
@@ -60,6 +89,25 @@
           dropdown.addEventListener('click', function (e) {
             e.stopPropagation();
           });
+
+          designer.addEventListener('click', function (e) {
+            e.preventDefault();
+            newProject.classList.remove("hidden");
+          });
+
+          close.addEventListener('click', function () {
+            console.log("closing")
+            newProject.classList.add("hidden");
+          });
+
+          const messages = document.querySelector('.messages');
+          if (messages) {
+            setTimeout(() => {
+              messages.style.transition = "opacity 0.5s ease-out";
+              messages.style.opacity = "0";
+              setTimeout(() => messages.remove(), 500); // removes it after fade
+            }, 3000); // 3 seconds
+          }
         });
       </script>      
 </body>

@@ -73,6 +73,23 @@ body {
     border-radius: 5px;
     box-shadow: 2px 2px 5px rgb(0, 0, 255);
 }
+
+.window-button {
+    display: flex;            /* allows text and icon side-by-side */
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;              /* or set a fixed width if needed */
+    padding: 0.5rem 1rem;
+    margin-bottom: 0.5rem;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: left;         /* keep text aligned properly */
+    box-sizing: border-box;   /* includes padding in width */
+    cursor: pointer;
+    outline: none;
+}
+
 .window:hover .delete-window-btn {
     box-shadow: 0 0 10px #ff0000;
     transition: box-shadow 0.3s ease;
@@ -151,4 +168,98 @@ body {
     content: "";
     display: block;
     padding-top: 56.25%;     /* 16:9 aspect ratio (adjust if needed) */
+}
+
+
+.customize-window-btn {
+    margin-left: 8px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.frame-dropdown {
+    margin-top: 4px;
+    display: block;
+    width: 100%;
+    padding: 4px;
+    font-size: 0.8rem;
+}
+
+.frame-options {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.frame-style {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.frame-style[data-style="classic"] {
+    background-color: #f28b82;
+}
+
+.frame-style[data-style="modern"] {
+    background-color: #aecbfa;
+}
+
+.frame-style[data-style="minimal"] {
+    background-color: #d3d3d3;
+}
+
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5); /* Dim background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000; /* Make sure it's above everything else */
+}
+
+.popup-content {
+    position: relative; /* Needed to position close button inside */
+    background: white;
+    padding: 20px 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    min-width: 300px;
+}
+
+.popup-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+}
+
+.popup-close:hover {
+    color: red;
+}
+
+.hidden {
+    display: none;
+}
+
+.popup-frame-image {
+    height: 100px; /* Set a fixed height for all images */
+    width: auto;   /* Maintain aspect ratio */
+    margin-bottom: 10px; /* Space between frames */
 }

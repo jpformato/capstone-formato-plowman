@@ -5,8 +5,8 @@ from django.db import models
 
 class Customer(models.Model):
     customer_id = models.AutoField(primary_key=True)
-    first_name = models.CharField(max_length=50, null=False)
-    last_name = models.CharField(max_length=50, null=False)
+    first_name = models.CharField(max_length=50, null=True)
+    last_name = models.CharField(max_length=50, null=True)
     email = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
@@ -60,6 +60,7 @@ class Preview(models.Model):
 class Frame(models.Model):
     frame_id = models.AutoField(primary_key=True)
     image = models.BinaryField(null=True)
+    name = models.CharField(max_length=50, null=True)
 
 class Window(models.Model):
     window_id = models.AutoField(primary_key=True)

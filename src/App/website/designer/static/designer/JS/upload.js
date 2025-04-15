@@ -4,6 +4,7 @@ const canvas = new fabric.Canvas("canvas", { selection: false });
 const inputFile = document.getElementById("input-file");
 const uploadBtn = document.getElementById("upload-btn");
 const clearButton = document.getElementById("clear-selection-btn");
+const saveButton = document.getElementById("save-project-btn");
 const windowList = document.querySelector(".window-list");
 const rectangleMap = {};
 
@@ -40,26 +41,97 @@ uploadBtn.addEventListener("click", function () {
 
 // Load Image into Fabric.js Canvas
 inputFile.addEventListener("change", function (e) {
-    const reader = new FileReader();
-    reader.onload = function (event) {
-        const imgObj = new Image();
-        imgObj.onload = function () {
-            const fabricImg = new fabric.Image(imgObj);
-            
-            // Scale the image to fit within the canvas
-            const scaleFactor = Math.min(
-                canvas.width / fabricImg.width,
-                canvas.height / fabricImg.height
-            );
-            fabricImg.scale(scaleFactor);
+    const fileInput = e.target;
+    const file = fileInput.files[0];
 
-            fabricImg.set({ selectable: false });
-            canvas.setBackgroundImage(fabricImg, canvas.renderAll.bind(canvas));
-            imageUploaded = true;
-        };
-        imgObj.src = event.target.result;
-    };
-    reader.readAsDataURL(e.target.files[0]);
+    if (file) {
+        const formData = new FormData();
+        formData.append('image', file);
+        const csrfToken = document.querySelector('[name=csrf-token]').content;
+
+        // Upload the image
+        fetch('/upload-image/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Image uploaded successfully');
+
+                // load image in canvas
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const imgObj = new Image();
+                    imgObj.onload = function () {
+                        const fabricImg = new fabric.Image(imgObj);
+                        
+                        // Scale image
+                        const scaleFactor = Math.min(
+                            canvas.width / fabricImg.width,
+                            canvas.height / fabricImg.height
+                        );
+                        fabricImg.scale(scaleFactor);
+
+                        fabricImg.set({ selectable: false });
+                        canvas.setBackgroundImage(fabricImg, canvas.renderAll.bind(canvas));
+                        imageUploaded = true;
+                    };
+                    imgObj.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                console.error('Failed to upload image:', data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+});
+
+saveButton.addEventListener("click", function (e) {
+    console.log("saving")
+    windows = [];
+    for(let rectId in rectangleMap) {
+        const rectangle = rectangleMap[rectId];
+        if(!rectangle) {
+            console.log("NONE");
+            return;
+        }
+        const frameId = rectangle.frameImage ? rectangle.frameImage.frameId : null;
+        const x1 = Math.floor(rectangle.left);
+        const y1 = Math.floor(rectangle.top);
+        const x2 = Math.floor(rectangle.left + rectangle.width * rectangle.scaleX);
+        const y2 = Math.floor(rectangle.top + rectangle.height * rectangle.scaleY);
+
+        windows.push({x1, y1, x2, y2, frameId});
+    }
+
+    // Send window data to the backend
+    const csrfToken = document.querySelector('[name=csrf-token]').content; // Get CSRF token
+    fetch('/save-windows/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrfToken,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ windows: windows }) // Send windows array as JSON
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log("success")
+        } else {
+            console.log("fail")
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
 });
 
 // Mouse Down - Start Drawing
@@ -67,8 +139,14 @@ function onMouseDown(event) {
     if (!imageUploaded || isMoving) return; // Ensure an image is uploaded before drawing
 
     const pointer = canvas.getPointer(event);
-    const activeObject = canvas.getActiveObject();
+    const clicked = event.target;
 
+    // if clicking frame then don't draw a rectangle
+    if (clicked && clicked.frameId) {
+        return;
+    }
+
+    const activeObject = canvas.getActiveObject();
     // If an existing rectangle is being resized, do not create a new one
     if (activeObject && activeObject.type === "rect") {
         console.log("Resizing existing rectangle, not drawing a new one.");
@@ -96,6 +174,24 @@ function onMouseDown(event) {
 
     canvas.add(rect);
 }
+
+canvas.on('mouse:down', function (e) {
+    const clickedObject = e.target;
+
+    if (clickedObject && clickedObject.rectId) {
+        const rectId = clickedObject.rectId;
+        const rectangle = rectangleMap[rectId];
+
+        if (rectangle) {
+            canvas.setActiveObject(rectangle);
+            canvas.renderAll();
+        }
+
+        // Prevent drawing new rectangles on image click
+        isDrawing = false;
+    }
+});
+
 
 // Mouse Move - Update Rectangle Size
 function onMouseMove(event){
@@ -144,38 +240,144 @@ function onMouseUp(event) {
     console.log("Rectangle set as active object");
 
     // Create a new window button
-    const newWindowButton = document.createElement("div");
-    newWindowButton.classList.add("window");
+    const newWindowButton = document.createElement("button");
+    newWindowButton.classList.add("window", "window-button");
     newWindowButton.dataset.rectId = rectId;
 
     // Create delete button with trash icon
     const deleteButton = document.createElement("button");
     deleteButton.classList.add("delete-window-btn");
-    deleteButton.innerHTML = newWindowButton.innerHTML = 
+    deleteButton.innerHTML = newWindowButton.innerHTML =
         `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
             <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
             <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
         </svg>`
     ;
 
+    rectangleCount++;
+
     // Append delete button to window button then window button to window list
     newWindowButton.innerHTML = `Window ${rectangleCount} `;
     newWindowButton.appendChild(deleteButton);
     windowList.appendChild(newWindowButton);
 
-    rectangleCount++;
-
     // Add event listener to remove rectangle and button when clicked
-    deleteButton.addEventListener("click", function () {
+    deleteButton.addEventListener("click", function (e) {
         const rectId = newWindowButton.dataset.rectId; // Get ID from dataset
         const rectangle = rectangleMap[rectId];
 
         if (rectangle) {
+            const frameImage = canvas.getObjects().find(obj => obj.rectId === rectId);
+            if (frameImage) {
+                canvas.remove(frameImage); // Remove frame image from canvas
+            }
             canvas.remove(rectangle);       
             canvas.renderAll();
             newWindowButton.remove();
             delete rectangleMap[rectId];
         }
+
+        e.stopPropagation();
+    });
+
+    newWindowButton.addEventListener("click", function () {
+        console.log("Opening popup...");
+        const popup = document.getElementById("popup");
+        popup.dataset.targetRectId = newWindowButton.dataset.rectId;
+
+        fetch('/get-frames/')
+            .then(response => response.json())
+            .then(data => {
+                const frameContainer = document.getElementById("frame-options");
+                frameContainer.innerHTML = ""; // clear old content
+
+                data.frames.forEach(frame => {
+                    const frameDiv = document.createElement("div");
+                    frameDiv.classList.add("frame-option");
+                    frameDiv.style.cursor = "pointer";
+                    frameDiv.style.marginBottom = "10px";
+
+                    frameDiv.innerHTML = `
+                        <p>${frame.name}</p>
+                        <img src="${frame.image}" alt="${frame.name}" style="width: 100px; height: auto;" />
+                    `;
+
+                    canvas.on('object:moving', function (e) {
+                        const object = e.target;
+                    
+                        // Check if rectangle is being moved and find its frame
+                        if (object.type === 'rect') {
+                            const frameImage = canvas.getObjects().find(obj => obj.rectId === object.id);
+                            if (frameImage) {
+                                // Change position to same as rectangle
+                                frameImage.set({
+                                    left: object.left,
+                                    top: object.top,
+                                });
+                                canvas.renderAll();
+                            }
+                        }
+                    });
+
+                    canvas.on('object:scaling', function (e) {
+                        const object = e.target;
+                    
+                        // Check if rectangle and find frame
+                        if (object.type === 'rect') {
+                            const frameImage = canvas.getObjects().find(obj => obj.rectId === object.id);
+                            if (frameImage) {
+                                const newWidth = object.width * object.scaleX;
+                                const newHeight = object.height * object.scaleY;
+                    
+                                // Update the frame size and position
+                                frameImage.set({
+                                    left: object.left,
+                                    top: object.top,
+                                    scaleX: newWidth / frameImage.width,
+                                    scaleY: newHeight / frameImage.height,
+                                });
+                                canvas.renderAll();
+                            }
+                        }
+                    }); 
+
+                    frameDiv.addEventListener("click", () => {
+                        const rectId = popup.dataset.targetRectId;
+                        const rectangle = rectangleMap[rectId];
+
+                        if (rectangle) {
+                            // If window has a frame remove the frame from canvas
+                            if (rectangle.frameImage) {
+                                canvas.remove(rectangle.frameImage);
+                            }
+
+                            fabric.Image.fromURL(frame.image, function (img) {
+                                const actualWidth = rectangle.width * rectangle.scaleX;
+                                const actualHeight = rectangle.height * rectangle.scaleY;
+
+                                img.set({
+                                    left: rectangle.left,
+                                    top: rectangle.top,
+                                    scaleX: actualWidth / img.width,
+                                    scaleY: actualHeight / img.height,
+                                    selectable: false,
+                                    frameId: frame.id,
+                                    rectId: rectId
+                                });
+                                canvas.add(img);
+                                canvas.renderAll();
+                                rectangle.frameImage = img;
+                            });
+                        }
+
+                        popup.classList.add("hidden");
+                    });
+                    
+                    frameContainer.appendChild(frameDiv);
+                });
+
+                popup.classList.remove("hidden");
+            });
     });
 }
 
@@ -189,4 +391,8 @@ clearButton.addEventListener("click", function () {
 
     windowList.innerHTML = "";  // Removes all window buttons
     rectangleCount = 0;         // Reset rectangle count
+});
+
+document.getElementById("popup-close").addEventListener("click", function () {
+    document.getElementById("popup").classList.add("hidden");
 });

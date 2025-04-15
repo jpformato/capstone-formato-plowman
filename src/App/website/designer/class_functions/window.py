@@ -1,17 +1,27 @@
-from ..models import Window, Preview
+from ..models import Window, Preview, Frame
 from .preview import read_preview
+from django.core.exceptions import ObjectDoesNotExist
 
-def create_window(preview_id, x1, y1, x2, y2):
+def create_window(preview_id, x1, y1, x2, y2, frame_id):
     preview = read_preview(preview_id)
     if preview is None:
         return None
+    
+    if frame_id:
+        try:
+            frame = Frame.objects.get(frame_id=frame_id)
+        except ObjectDoesNotExist:
+            frame = None
+    else:
+        frame = None
 
     window = Window.objects.create(
         x1 = x1,
         y1 = y1,
         x2 = x2,
         y2 = y2,
-        preview = preview
+        preview = preview,
+        frame = frame
     )
 
     return window

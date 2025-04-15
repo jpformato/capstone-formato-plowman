@@ -100,3 +100,75 @@ body {
 .logout-btn:hover {
     background-color: #d32f2f;
 }
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* Dim background */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000; /* Make sure it's above everything else */
+}
+
+.popup-content {
+  position: relative; /* Needed to position close button inside */
+  background: white;
+  padding: 20px 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  min-width: 300px;
+}
+
+.popup-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+}
+
+.popup-close:hover {
+  color: red;
+}
+
+.hidden {
+  display: none;
+}
+
+.messages {
+  position: fixed;
+  top:10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: 100%;
+  max-width: 600px;
+  text-align: center;
+  padding: 10px;
+  pointer-events: none; /* prevents blocking other UI */
+}
+
+.message {
+  display: inline-block;
+  background-color: #e74c3c; /* red for error */
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  animation: slideDownFade 3s forwards;
+}
+
+@keyframes slideDownFade {
+  0% { opacity: 0; transform: translateY(-20px); }
+  10% { opacity: 1; transform: translateY(0); }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-20px); }
+}
