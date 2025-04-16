@@ -7,7 +7,10 @@ from .class_functions.window import create_window, read_window
 from .models import Project, ProjectStatus, Status, Frame, Project_Detail, Preview, Window
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
+from django.http import HttpResponseForbidden, JsonResponse
+from django.contrib.messages import get_messages
 import json
 from django.utils.dateparse import parse_date
 from datetime import datetime
@@ -71,6 +74,10 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
+            storage = get_messages(request)
+            for _ in storage:
+                pass  # clears the queue
+
             return redirect('menu')
         else:
             messages.error(request, "Invalid credentials")
@@ -96,10 +103,46 @@ def menu(request):
             return redirect('windowMain')
     return render(request, 'menu.html', {})
 
+@login_required
+def my_jobs(request):
+    user = request.user
+    projects = Project.objects.filter(employees=user)
+
+    context = {
+        'projects': projects
+    }
+    return render(request, 'my_jobs.html', context)
+
+@staff_member_required
+def job_list(request):
+    projects = Project.objects.all()
+
+    context = {
+        'projects': projects
+    }
+    return render(request, 'job_list.html', context)
+
+@login_required
+def load_project(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+
+    # Store project ID in session
+    request.session['project_id'] = project.project_id
+
+    # Also store the latest detail ID for this project
+    latest_detail = Project_Detail.objects.filter(project=project).order_by('-save_date').first()
+    if latest_detail:
+        request.session['detail_id'] = latest_detail.project_detail_id
+
+    return redirect('windowMain')  # This should launch the designer view
+
+@login_required
 def progressbar(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     all_steps = Status.objects.all().order_by('status_id')
     progress = ProjectStatus.objects.filter(project=project)
+
+    is_editable = request.user.is_authenticated and request.user.is_staff
 
     # Build a dictionary of progress by status name
     progress_dict = {
@@ -115,6 +158,7 @@ def progressbar(request, project_id):
         'project': project,
         'steps': all_steps,
         'progress': progress_dict,
+        'is_editable': request.user.is_staff,  # Only staff can edit
     }
     return render(request, 'progressbar.html', context)
 

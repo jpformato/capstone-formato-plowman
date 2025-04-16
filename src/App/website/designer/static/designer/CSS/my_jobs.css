@@ -1,0 +1,122 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Jost', sans-serif;
+    background: linear-gradient(to bottom left, #0000ff, #0066ff, #0000ff);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+  
+.wrapper {
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  
+.fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(to bottom, #0000ff, #0066ff);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 10px 0;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+  
+.header-image {
+    max-width: 300px;
+    height: auto;
+}
+  
+.job-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    padding: 15px 20px;
+    width: 100%;
+    max-width: 600px;
+    background: linear-gradient(to right, #0000ff, #0066ff);
+    color: white;
+    font-size: 1.1em;
+    border-radius: 10px;
+    box-shadow: 0 0 8px white, 0 0 15px white;
+    transition: transform 0.2s ease-in-out;
+}
+
+.left-side {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+  
+.job-card:hover {
+    transform: scale(1.02);
+}
+
+.project-id {
+    font-size: 1.3em;
+    font-weight: bold;
+    margin-bottom: 8px;
+    width: 50%;
+}
+
+.job-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex: 1;
+}
+
+.job-info {
+    flex: 1;
+ }
+
+.job-actions {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    align-items: flex-end;
+    gap: 10px;
+}  
+  
+.page-content {
+    margin-top: 100px; /* leave space for the fixed header */
+    padding: 0 20px 40px;
+    max-width: 800px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+  
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 15px;
+    align-items: center;
+    width: 100%;
+}
+  
+.square-btn.small {
+    display: inline-flex;
+    width: auto;
+    height: auto;
+    padding: 8px 16px;
+    font-size: 0.9em;
+    margin-right: 10px;
+    box-shadow: none;
+    border-radius: 6px;
+    background: #0000ff;
+    color: white;
+    text-decoration: none;
+}
+
+.square-btn.small:hover {
+    background: #0c0361;
+}  
