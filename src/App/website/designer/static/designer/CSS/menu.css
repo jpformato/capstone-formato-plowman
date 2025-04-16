@@ -24,9 +24,9 @@ body {
   }
   
   .container {
-    display: grid;
-    grid-template-columns: repeat(3, 200px);
-    grid-template-rows: repeat(2, 200px);
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
     gap: 10px; /* space between blocks */
   }
   

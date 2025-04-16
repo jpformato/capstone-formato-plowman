@@ -9,8 +9,10 @@ statuses = ['Contract', 'Final Measure', 'Order', 'ETA', 'Installation']
 
 def create_project(customer_email, employee_id):
     """Create a project"""
+    print (employee_id)
     customer = read_customer_email(customer_email)
     if customer is None:
+        print(customer_email)
         customer = create_customer(email=customer_email)
         if customer is None:
             return None

@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Jobs</title>
+  <link href="{% static 'designer/CSS/my_jobs.css' %}" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="fixed-header">
+    <img src="{% static 'designer/Figures/clearview-white-logo.png' %}" class="header-image" />
+  </div>
+
+  <div class="page-content">
+    <h2 style="color: white; text-align: center;">My Jobs</h2>
+
+    <div class="container">
+        {% if projects %}
+            {% for project in projects %}
+                <div class="job-card">
+                    Project ID: {{ project.project_id }}<br>
+                    Customer Email: {{ project.customer.email }}
+            
+                    <div class="job-actions">
+                        <a href="{% url 'load_project' project.project_id %}" class="square-btn small">Open Project</a>
+                        <a href="{% url 'progressbar' project.project_id %}" class="square-btn small">View Progress</a>
+                    </div>
+                </div>          
+            {% endfor %}
+        {% else %}
+            <p style="color: white; text-align: center;">No jobs assigned to you.</p>
+        {% endif %}
+    </div>
+  </div>
+
+</body>
+</html>

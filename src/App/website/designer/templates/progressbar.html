@@ -8,7 +8,7 @@
 </head>
 <body>
 
-    <!-- Inject project ID -->
+    <!-- Inject project ID and edit permissions -->
     <script>
         const PROJECT_ID = "{{ project.project_id }}";
     </script>
@@ -40,25 +40,29 @@
             <h2>Step Info</h2>
             <form id="stepForm">
                 <label for="dateStarted">Date Started (MM/DD/YY):</label>
-                <input type="text" id="dateStarted" name="dateStarted" placeholder="MM/DD/YY"><br><br>
+                <input type="text" id="dateStarted" name="dateStarted" placeholder="MM/DD/YY"
+                       {% if not is_editable %}disabled{% endif %}><br><br>
 
                 <label for="dateCompleted">Date Completed (MM/DD/YY):</label>
-                <input type="text" id="dateCompleted" name="dateCompleted" placeholder="MM/DD/YY"><br><br>
+                <input type="text" id="dateCompleted" name="dateCompleted" placeholder="MM/DD/YY"
+                       {% if not is_editable %}disabled{% endif %}><br><br>
 
                 <label for="notes">Notes:</label><br>
-                <textarea id="notes" name="notes" rows="4" cols="30" placeholder="Enter notes here..."></textarea><br><br>
+                <textarea id="notes" name="notes" rows="4" cols="30" placeholder="Enter notes here..."
+                          {% if not is_editable %}disabled{% endif %}></textarea><br><br>
 
+                {% if is_editable %}
                 <div style="text-align: right;">
                     <button type="submit" id="updateBtn">Update</button>
                 </div>
+                {% endif %}
             </form>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script>emailjs.init("55iHUfDeIfrnMtqe0"); //public key</script>
+    <script>emailjs.init("55iHUfDeIfrnMtqe0"); // public key</script>
 
     <script src="{% static 'designer/JS/stepper.js' %}"></script>
-
 </body>
 </html>

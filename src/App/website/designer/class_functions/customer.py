@@ -2,6 +2,7 @@ from ..models import Customer
 from django.db.utils import IntegrityError
 
 def create_customer(email, first_name=None, last_name=None):
+    print(email)
     try:
         if first_name is None or last_name is None:
             customer = Customer.objects.create(
