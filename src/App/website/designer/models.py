@@ -25,7 +25,7 @@ class Project(models.Model):
                                     related_name="customer_projects")
     employees = models.ManyToManyField(User, related_name="assigned_projects")
     statuses = models.ManyToManyField(Status, through='ProjectStatus', related_name="projects")
-    tracking_number = models.CharField(max_length=36, unique=True, null=True)
+    order_number = models.CharField(max_length=8, unique=True, null=True)
     # TEXT AND EMAIL NOTIFICATIONS
 
     def __str__(self):

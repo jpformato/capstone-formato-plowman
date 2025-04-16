@@ -12,6 +12,7 @@ import json
 from django.utils.dateparse import parse_date
 from datetime import datetime
 import base64
+from django.contrib.messages import get_messages
 
 @require_POST
 @csrf_exempt
@@ -71,8 +72,12 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
+            storage = get_messages(request)
+            for _ in storage:
+                pass  # clears the queue
             return redirect('menu')
         else:
+            # GO BACK AND MAKE THE MESSAGE
             messages.error(request, "Invalid credentials")
             return redirect('/')
         

@@ -1,7 +1,8 @@
 from ..models import Project, Customer, Status, ProjectStatus
 from .customer import read_customer_email, create_customer
 from django.contrib.auth.models import User
-import uuid
+import random
+import string
 
 # Contract, Final Measure, Order, ETA, Installation, <-- Upon the completion of installation marks the completion of the project
 statuses = ['Contract', 'Final Measure', 'Order', 'ETA', 'Installation']
@@ -11,6 +12,8 @@ def create_project(customer_email, employee_id):
     customer = read_customer_email(customer_email)
     if customer is None:
         customer = create_customer(email=customer_email)
+        if customer is None:
+            return None
     
     try:
         employee = User.objects.get(id=employee_id)
@@ -83,11 +86,12 @@ def delete_project(project_id):
     project.delete()
     return True
 
-def generate_tracking_number():
+def generate_order_number():
+    chars = string.ascii_uppercase + string.digits  # e.g. A-Z, 0-9
     while True:
-        tracking_number = uuid.uuid4()
-        if not Project.objects.filter(tracking_number=tracking_number).exists():
-            return tracking_number
+        order_number = ''.join(random.choices(chars, k=8))
+        if not Project.objects.filter(order_number=order_number).exists():
+            return order_number
 
 # set connection to statuses and generate tracking number
 def start_project(project_id):
@@ -103,29 +107,7 @@ def start_project(project_id):
         status = Status.objects.get(name=status)
         project.statuses.add(status)
 
-    project.tracking_number = generate_tracking_number()
+    project.order_number = generate_order_number()
     project.save()
     
     return project
-
-# def next(project_id):
-#     try:
-#         project = Project.objects.get(project_id=project_id)
-#     except Project.DoesNotExist:
-#         return None
-    
-#     if project.statuses is None:
-#         start_project(project_id)
-#         return True
-    
-#     status_count = project.statuses.count()
-#     if status_count == statuses.length:
-#         return None
-#     else:
-#         try:
-#             status = Status.objects.get(name=statuses[status_count])
-#         except Project.DoesNotExist:
-#             return None
-#         project.statuses.add(status)
-
-#     return project
