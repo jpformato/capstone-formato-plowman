@@ -36,6 +36,7 @@ class ProjectStatus(models.Model):
     status = models.ForeignKey(Status, on_delete=models.CASCADE)
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
+    planned_date = models.DateField(null=True, blank=True)
     notes = models.TextField(null=True, blank=True)
 
     class Meta:
@@ -56,6 +57,7 @@ class Preview(models.Model):
     save_date = models.DateField(auto_now_add=True) # THIS IS PERMANENT WITH AUTO
     detail = models.ForeignKey(Project_Detail, on_delete=models.CASCADE,
                                 related_name="previews")
+    final = models.BooleanField(default=False)
 
 class Frame(models.Model):
     frame_id = models.AutoField(primary_key=True)
