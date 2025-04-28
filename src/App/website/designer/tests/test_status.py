@@ -18,6 +18,11 @@ class StatusTests(TestCase):
         self.assertIsNotNone(read)
         self.assertEqual(read.name, self.status.name)
 
+    def test_read_dne(self):
+        """Test reading a status from the db when it doesn't exist"""
+        read = read_status(self.status.status_id+1)
+        self.assertIsNone(read)
+
     def test_update(self):
         """Test updating a status"""
         new_name = "Accepted"
@@ -25,7 +30,18 @@ class StatusTests(TestCase):
         self.assertIsNotNone(updated)
         self.assertNotEqual(updated.name, self.status.name)
 
+    def test_update_dne(self):
+        """Test updating a status when it doesn't"""
+        new_name = "Accepted"
+        updated = update_status(self.status.status_id+1, new_name)
+        self.assertIsNone(updated)
+
     def test_delete(self):
         """Test deleting statuses"""
         deleted = delete_status(self.status.status_id)
         self.assertTrue(deleted)
+
+    def test_delete(self):
+        """Test deleting statuses when it doesn't exist"""
+        deleted = delete_status(self.status.status_id+1)
+        self.assertIsNone(deleted)

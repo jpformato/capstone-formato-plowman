@@ -20,10 +20,13 @@
         <div class="sidebar">
             <div class="window-list"></div>
             <div class="fixed-bottom">
-              <button id="upload-btn" class="upload-file-btn">Upload Image</button>
-              <input type="file" id="input-file" accept="image/*" hidden>
-              <button class="clear-selection-btn" id="clear-selection-btn">Clear All Windows</button>
-              <button class="save-project-btn" id="save-project-btn">Save Project</button>
+                <button id="upload-btn" class="upload-file-btn">Upload Image</button>
+                <input type="file" id="input-file" accept="image/*" hidden>
+                <!-- {% if opening_project %}
+                    <button id="load-btn" class="upload-file-btn">Load Preview</button>
+                {% endif %} -->
+                <button class="clear-selection-btn" id="clear-selection-btn">Clear All Windows</button>
+                <button class="save-project-btn" id="save-project-btn">Save Project</button>
           </div>
         </div>
         <div class="content">
@@ -41,6 +44,21 @@
             </div>
         </div>
     </div>
+    <!-- <div id="load-popup" class="popup-overlay hidden">
+        <div class="popup-content">
+            <span id="load-popup-close" class="popup-close">&times;</span>
+            <h3>Load From</h3>
+            <div class="popup-buttons">
+                <button id="load-project-image-btn" class="popup-choice-btn">Image</button>
+                <button id="load-preview-btn" class="popup-choice-btn">Preview</button>
+            </div>
+    
+             This is where the images will be inserted 
+            <div id="image-options" class="image-options" style="display: none;">
+                 Images will be dynamically added here 
+            </div>
+        </div>
+    </div> -->
     <meta name="csrf-token" content="{{ csrf_token }}">
     <script src="{% static 'designer/JS/upload.js' %}"></script>
 </body>

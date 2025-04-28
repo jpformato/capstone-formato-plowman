@@ -111,8 +111,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2000; /* Make sure it's above everything else */
+  z-index: 2000;
 }
+
 
 .popup-content {
   position: relative; /* Needed to position close button inside */

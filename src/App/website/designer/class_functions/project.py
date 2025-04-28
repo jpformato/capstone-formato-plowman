@@ -9,10 +9,8 @@ statuses = ['Contract', 'Final Measure', 'Order', 'ETA', 'Installation']
 
 def create_project(customer_email, employee_id):
     """Create a project"""
-    print (employee_id)
     customer = read_customer_email(customer_email)
     if customer is None:
-        print(customer_email)
         customer = create_customer(email=customer_email)
         if customer is None:
             return None
@@ -24,6 +22,8 @@ def create_project(customer_email, employee_id):
 
     project = Project.objects.create(customer = customer)
     project.employees.add(employee)
+    project.order_number = generate_order_number()
+    project.save()
     return project
 
 def read_project(project_id):
@@ -35,9 +35,9 @@ def read_project(project_id):
     
     return project
 
-def read_project_tracking(tracking_number):
+def read_project_order(order_number):
     try: 
-        project = Project.objects.get(tracking_number=tracking_number)
+        project = Project.objects.get(order_number=order_number)
     except Project.DoesNotExist:
         return None
     
@@ -71,8 +71,9 @@ def add_employee(project_id, employee_email):
     except Project.DoesNotExist:
         return None
     
-    new_employee = User.objects.get(email=employee_email)
-    if new_employee is None:
+    try:
+        new_employee = User.objects.get(email=employee_email)
+    except User.DoesNotExist:
         return None
     
     project.employees.add(new_employee)
@@ -109,7 +110,5 @@ def start_project(project_id):
         status = Status.objects.get(name=status)
         project.statuses.add(status)
 
-    project.order_number = generate_order_number()
     project.save()
-    
     return project

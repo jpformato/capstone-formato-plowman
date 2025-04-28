@@ -63,6 +63,7 @@ body {
     font-weight: bold;
     margin-bottom: 8px;
     width: 50%;
+    white-space: nowrap;
 }
 
 .job-content {
@@ -103,7 +104,7 @@ body {
     width: 100%;
 }
   
-.square-btn.small {
+/* .square-btn.small {
     display: inline-flex;
     width: auto;
     height: auto;
@@ -119,4 +120,106 @@ body {
 
 .square-btn.small:hover {
     background: #0c0361;
-}  
+}   */
+  
+/* Square Button Small */
+.square-btn.small {
+    display: inline-flex;
+    width: auto;
+    height: auto;
+    padding: 12px 18px; /* Adjust padding to make the button more clickable */
+    font-size: 1em; /* Slightly increase font size for better readability */
+    margin-right: 10px;
+    box-shadow: none;
+    border: none; /* Remove the border to match the View Progress button */
+    border-radius: 6px;
+    background: linear-gradient(to right, #0000ff, #0066ff);
+    color: white;
+    text-decoration: none;
+    transition: background 0.3s ease, transform 0.2s ease-in-out;
+    justify-content: center;
+    align-items: center;
+}
+
+.square-btn.small:hover {
+    background: linear-gradient(to right, #0c0361, #003366); /* Darker gradient on hover */
+}
+
+/* Previews Popup */
+.previews-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5); /* Darker overlay */
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    z-index: 2000;
+}
+
+/* Popup content container */
+.list-content {
+    position: relative; /* Needed to position close button inside */
+    background: white;
+    padding: 20px 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    min-width: 300px;
+    max-width: 600px;
+    overflow-y: auto;
+    max-height: 70vh; /* Allow scrolling if content exceeds height */
+}
+
+/* Close button */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 30px; /* Make the X button large */
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    z-index: 2100; /* Ensure the button is above all content */
+}
+
+.close-btn:hover {
+    color: #e74c3c; /* Red color on hover */
+}
+
+/* List content */
+#list-text {
+    font-size: 1.2em;
+    color: #333;
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+#list-text ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+#list-text li {
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+    font-size: 1.1em;
+    color: #333;
+}
+
+.open-preview-btn {
+background: linear-gradient(to right, #0000ff, #0066ff); /* Green */
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  margin-left: 10px; /* Space between the info and button */
+}
+
+.open-preview-btn:hover {
+    background: linear-gradient(to right, #0c0361, #003366);
+}

@@ -2,14 +2,16 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from .class_functions.project import create_project, read_project, update_project
+from .class_functions.project_detail import create_project_detail, read_project_detail
 from .class_functions.preview import create_preview, read_preview
 from .class_functions.window import create_window, read_window
+from .class_functions.window import read_frame
 from .models import Project, ProjectStatus, Status, Frame, Project_Detail, Preview, Window
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
-from django.http import HttpResponseForbidden, JsonResponse
+from django.http import HttpResponseForbidden, JsonResponse, Http404, HttpResponse
 from django.contrib.messages import get_messages
 import json
 from django.utils.dateparse import parse_date
@@ -64,7 +66,10 @@ def index(request):
     return render(request, 'index.html', {})
 
 def windowMain(request):
-    return render(request, 'windowMain.html', {})
+    opening_project = request.session.get('opening_project', False)
+    return render(request, 'windowMain.html', {
+        'opening_project': opening_project
+    })
 
 def login_view(request):
     if request.method == 'POST':
@@ -102,6 +107,9 @@ def menu(request):
             return redirect('menu')
         else:
             request.session['project_id'] = project.project_id
+            request.session['detail_id'] = None
+            request.session['preview_id'] = None
+            request.session['opening_project'] = False
             return redirect('windowMain')
     return render(request, 'menu.html', {})
 
@@ -123,20 +131,6 @@ def job_list(request):
         'projects': projects
     }
     return render(request, 'job_list.html', context)
-
-@login_required
-def load_project(request, project_id):
-    project = get_object_or_404(Project, pk=project_id)
-
-    # Store project ID in session
-    request.session['project_id'] = project.project_id
-
-    # Also store the latest detail ID for this project
-    latest_detail = Project_Detail.objects.filter(project=project).order_by('-save_date').first()
-    if latest_detail:
-        request.session['detail_id'] = latest_detail.project_detail_id
-
-    return redirect('windowMain')  # This should launch the designer view
 
 @login_required
 def progressbar(request, project_id):
@@ -212,10 +206,10 @@ def save_windows(request):
         try:
             data = json.loads(request.body)
             windows = data.get('windows', [])
-            preview = create_preview(request.session['detail_id']) # or however you fetch this
+            preview = create_preview(request.session['detail_id'])
             if preview is None:
                 return JsonResponse({'success': False,'error': 'Could not create or retrieve preview.'}, status=400)
-
+            request.session['preview_id'] = preview.preview_id
 
             # Loop through the windows data and save each one
             print(windows)
@@ -234,3 +228,84 @@ def save_windows(request):
             return JsonResponse({'success': False, 'error': str(e)}, status=400)
     
     return JsonResponse({'success': False, 'error': 'Invalid request'}, status=400)
+
+def get_previews(request, project_id):
+    previews = []
+    project = read_project(project_id=project_id)
+    
+    if project is None:
+        print("NONE")
+        return
+
+    for detail in project.details.all():
+        for preview in detail.previews.all():
+            previews.append({
+                'preview_id': preview.preview_id,
+                'save_date': preview.save_date.strftime('%Y-%m-%d'),
+                'final': preview.final,
+            })
+    return JsonResponse(previews, safe=False)
+
+@login_required
+def load_project(request, preview_id):
+    preview = read_preview(preview_id=preview_id)
+    if preview is None:
+        raise Http404("Preview not found")
+
+
+    # Save IDs to session for later reference
+    request.session['preview_id'] = preview.preview_id
+    request.session['detail_id'] = preview.detail.project_detail_id
+    request.session['project_id'] = preview.detail.project.project_id
+    request.session['opening_project'] = True
+
+    return redirect('windowMain')  # This should launch the designer view
+
+def get_detail_image(request):
+    if request.session['detail_id'] is None:
+        raise Http404("Detail is none")
+    
+    detail = read_project_detail(request.session['detail_id'])
+    if detail is None:
+        raise Http404("Detail not found")
+    
+    # if detail.image[:3] == b'\xFF\xD8\xFF':
+    #     content_type = 'image/jpeg'
+    # else:
+    #     content_type = 'image/png'
+
+    return HttpResponse(detail.image, content_type='image/*')
+
+def get_windows(request):
+    windows = []
+    preview = read_preview(preview_id=request.session['preview_id'])
+    if preview is None:
+        raise Http404("Preview not found")
+    
+    for window in preview.windows.all():
+        if window.frame is not None:
+            windows.append({
+                'x1': window.x1,
+                'x2': window.x2,
+                'y1': window.y1,
+                'y2': window.y2,
+                'frame_id': window.frame.frame_id
+            })
+        else:
+            windows.append({
+                'x1': window.x1,
+                'x2': window.x2,
+                'y1': window.y1,
+                'y2': window.y2,
+                'frame_id': None
+            })
+
+    return JsonResponse(windows, safe=False)
+
+def get_window_frame(request, frame_id):
+    print(frame_id)
+    frame = read_frame(frame_id)
+    if frame is None:
+        raise Http404("Detail not found")
+    
+    return HttpResponse(frame.image, content_type='image/*')

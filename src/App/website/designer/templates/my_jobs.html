@@ -21,11 +21,11 @@
         {% if projects %}
             {% for project in projects %}
                 <div class="job-card">
-                    Project ID: {{ project.project_id }}<br>
+                    Order Number: {{ project.order_number }}<br>
                     Customer Email: {{ project.customer.email }}
             
                     <div class="job-actions">
-                        <a href="{% url 'load_project' project.project_id %}" class="square-btn small">Open Project</a>
+                        <button class="square-btn small" data-projectId='{{ project.project_id }}' onclick='getPreviews(this)'>Open Project</button>
                         <a href="{% url 'progressbar' project.project_id %}" class="square-btn small">View Progress</a>
                     </div>
                 </div>          
@@ -36,5 +36,44 @@
     </div>
   </div>
 
+  <div id="previews-list" class="previews-popup" style="display: none;">
+    <div class="list-content">
+      <span class="close-btn" onclick="closePreviews()">&times;</span>
+      <div id="list-text">Loading...</div>
+    </div>
+  </div>
+
+  <script>
+    const list = document.getElementById("previews-list");
+    const text = document.getElementById("list-text")
+
+    function getPreviews(button) {
+      const projectId = button.dataset.projectId;
+      
+      fetch(`/get_previews/${projectId}/`)
+        .then(response => response.json())
+        .then(previews => showPreviews(previews))
+        .catch(error => {
+          console.error('Error fetching previews:', error);
+          text.innerHTML = "<p>Failed to load previews</p>";
+          list.style.display = "block";
+        });
+    }
+
+    function showPreviews(previews) {
+      if(previews.length === 0){
+        text.innerHTML = "<p>No previews found</p>";
+      }else{
+        text.innerHTML = "<ul>" + previews.map(p =>
+          `<li>Preview ID: ${p.preview_id} | Date: ${p.save_date} | Final: ${p.final ? "Yes" : "No"}</li>`).join('') + "</ul>";
+      }
+
+      list.style.display = "block";
+    }
+
+    function closePreviews() {
+      list.style.display = "none";
+    }
+  </script>
 </body>
 </html>
