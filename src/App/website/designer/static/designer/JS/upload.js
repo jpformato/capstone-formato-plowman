@@ -124,15 +124,41 @@ saveButton.addEventListener("click", function (e) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            console.log("success")
+            showMessage('Preview Saved', 'success');
+            console.log("success");
         } else {
-            console.log("fail")
+            showMessage(data.error || 'Save Failed', 'error');
+            console.log("fail");
         }
     })
     .catch(error => {
         console.error('Error:', error);
     });
 });
+
+function showMessage(message, type) {
+    // Create a message element
+    const messageElement = document.createElement('div');
+    messageElement.classList.add('message');
+    
+    // Set the message content
+    messageElement.textContent = message;
+
+    // Apply a style based on the type of message
+    if (type === 'success') {
+        messageElement.style.backgroundColor = 'green';
+    } else if (type === 'error') {
+        messageElement.style.backgroundColor = 'red';
+    }
+
+    // Append the message to the messages container
+    document.querySelector('.messages').appendChild(messageElement);
+
+    // Automatically remove the message after 3 seconds
+    setTimeout(() => {
+        messageElement.remove();
+    }, 3000);
+}
 
 // Mouse Down - Start Drawing
 function onMouseDown(event) {
@@ -492,6 +518,106 @@ if (load) {
                                 e.stopPropagation();
                             });
 
+                            newWindowButton.addEventListener("click", function () {
+                                console.log("Opening popup...");
+                                const popup = document.getElementById("popup");
+                                popup.dataset.targetRectId = newWindowButton.dataset.rectId;
+                        
+                                fetch('/get-frames/')
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        const frameContainer = document.getElementById("frame-options");
+                                        frameContainer.innerHTML = ""; // clear old content
+                        
+                                        data.frames.forEach(frame => {
+                                            const frameDiv = document.createElement("div");
+                                            frameDiv.classList.add("frame-option");
+                                            frameDiv.style.cursor = "pointer";
+                                            frameDiv.style.marginBottom = "10px";
+                        
+                                            frameDiv.innerHTML = `
+                                                <p>${frame.name}</p>
+                                                <img src="${frame.image}" alt="${frame.name}" style="width: 100px; height: auto;" />
+                                            `;
+                        
+                                            canvas.on('object:moving', function (e) {
+                                                const object = e.target;
+                                            
+                                                // Check if rectangle is being moved and find its frame
+                                                if (object.type === 'rect') {
+                                                    const frameImage = canvas.getObjects().find(obj => obj.rectId === object.id);
+                                                    if (frameImage) {
+                                                        // Change position to same as rectangle
+                                                        frameImage.set({
+                                                            left: object.left,
+                                                            top: object.top,
+                                                        });
+                                                        canvas.renderAll();
+                                                    }
+                                                }
+                                            });
+                        
+                                            canvas.on('object:scaling', function (e) {
+                                                const object = e.target;
+                                            
+                                                // Check if rectangle and find frame
+                                                if (object.type === 'rect') {
+                                                    const frameImage = canvas.getObjects().find(obj => obj.rectId === object.id);
+                                                    if (frameImage) {
+                                                        const newWidth = object.width * object.scaleX;
+                                                        const newHeight = object.height * object.scaleY;
+                                            
+                                                        // Update the frame size and position
+                                                        frameImage.set({
+                                                            left: object.left,
+                                                            top: object.top,
+                                                            scaleX: newWidth / frameImage.width,
+                                                            scaleY: newHeight / frameImage.height,
+                                                        });
+                                                        canvas.renderAll();
+                                                    }
+                                                }
+                                            }); 
+                        
+                                            frameDiv.addEventListener("click", () => {
+                                                const rectId = popup.dataset.targetRectId;
+                                                const rectangle = rectangleMap[rectId];
+                        
+                                                if (rectangle) {
+                                                    // If window has a frame remove the frame from canvas
+                                                    if (rectangle.frameImage) {
+                                                        canvas.remove(rectangle.frameImage);
+                                                    }
+                        
+                                                    fabric.Image.fromURL(frame.image, function (img) {
+                                                        const actualWidth = rectangle.width * rectangle.scaleX;
+                                                        const actualHeight = rectangle.height * rectangle.scaleY;
+                        
+                                                        img.set({
+                                                            left: rectangle.left,
+                                                            top: rectangle.top,
+                                                            scaleX: actualWidth / img.width,
+                                                            scaleY: actualHeight / img.height,
+                                                            selectable: false,
+                                                            frameId: frame.id,
+                                                            rectId: rectId
+                                                        });
+                                                        canvas.add(img);
+                                                        canvas.renderAll();
+                                                        rectangle.frameImage = img;
+                                                    });
+                                                }
+                        
+                                                popup.classList.add("hidden");
+                                            });
+                                            
+                                            frameContainer.appendChild(frameDiv);
+                                        });
+                        
+                                        popup.classList.remove("hidden");
+                                    });
+                            });
+
                             // Fetch the frame image associated with the window's frame_id
                             fetch(`/get-window-frame/${window.frame_id}/`)
                                 .then(response => response.blob())
@@ -538,3 +664,38 @@ if (load) {
                 console.error("Error fetching image:", err);
             });
 }
+
+canvas.on('object:moving', function (e) {
+    const object = e.target;
+    
+    if (object.type === 'rect') {
+        const frameImage = canvas.getObjects().find(obj => obj.rectId === object.id);
+        if (frameImage) {
+            frameImage.set({
+                left: object.left,
+                top: object.top,
+            });
+            canvas.renderAll();
+        }
+    }
+});
+
+canvas.on('object:scaling', function (e) {
+    const object = e.target;
+
+    if (object.type === 'rect') {
+        const frameImage = canvas.getObjects().find(obj => obj.rectId === object.id);
+        if (frameImage) {
+            const newWidth = object.width * object.scaleX;
+            const newHeight = object.height * object.scaleY;
+
+            frameImage.set({
+                left: object.left,
+                top: object.top,
+                scaleX: newWidth / frameImage.width,
+                scaleY: newHeight / frameImage.height,
+            });
+            canvas.renderAll();
+        }
+    }
+});

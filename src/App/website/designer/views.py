@@ -213,7 +213,6 @@ def save_windows(request):
             request.session['preview_id'] = preview.preview_id
 
             # Loop through the windows data and save each one
-            print(windows)
             for window in windows:
                 create_window(
                     preview_id=preview.preview_id,  # Assign the correct preview
@@ -223,7 +222,6 @@ def save_windows(request):
                     y2=window['y2'],
                     frame_id=window['frameId'],
                 )
-            print("YES")
             return JsonResponse({'success': True})
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)}, status=400)

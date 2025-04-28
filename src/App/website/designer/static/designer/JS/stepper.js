@@ -219,7 +219,7 @@ form.onsubmit = function (e) {
     // Send the Email 
     emailjs.send("service_h71srho", "template_zxuz93z", {
         email: CUSTOMER_EMAIL,  // The person who should receive the email
-        reply_to: "cmplowman@loyola.edu",  // Shows up when they click Reply
+        reply_to: "jpformato@loyola.edu",  // Shows up when they click Reply
         project_id: PROJECT_ID,
         update_message: updateMessage,     
     })
