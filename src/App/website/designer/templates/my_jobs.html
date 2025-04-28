@@ -25,7 +25,7 @@
                     Customer Email: {{ project.customer.email }}
             
                     <div class="job-actions">
-                        <button class="square-btn small" data-projectId='{{ project.project_id }}' onclick='getPreviews(this)'>Open Project</button>
+                        <button class="square-btn small" onclick='getPreviews(`{{ project.project_id }}`)'>Open Project</button>
                         <a href="{% url 'progressbar' project.order_number %}" class="square-btn small">View Progress</a>
                     </div>
                 </div>          
@@ -47,10 +47,8 @@
     const list = document.getElementById("previews-list");
     const text = document.getElementById("list-text")
 
-    function getPreviews(button) {
-      const projectId = button.dataset.projectId;
-      
-      fetch(`/get_previews/${projectId}/`)
+    function getPreviews(project_id) {
+      fetch(`/get-previews/${project_id}/`)
         .then(response => response.json())
         .then(previews => showPreviews(previews))
         .catch(error => {
@@ -65,7 +63,9 @@
         text.innerHTML = "<p>No previews found</p>";
       }else{
         text.innerHTML = "<ul>" + previews.map(p =>
-          `<li>Preview ID: ${p.preview_id} | Date: ${p.save_date} | Final: ${p.final ? "Yes" : "No"}</li>`).join('') + "</ul>";
+          `<li>Preview ID: ${p.preview_id} | Date: ${p.save_date} | Final: ${p.final ? "Yes" : "No"}
+            <button class="open-preview-btn" onclick="loadPreview(${p.preview_id})">Open</button>
+            </li>`).join('') + "</ul>";
       }
 
       list.style.display = "flex";
@@ -73,6 +73,10 @@
 
     function closePreviews() {
       list.style.display = "none";
+    }
+
+    function loadPreview(previewId) {
+      window.location.href = `/load-project/${previewId}/`;
     }
   </script>
 </body>
