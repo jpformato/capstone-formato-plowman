@@ -18,6 +18,7 @@ from django.utils.dateparse import parse_date
 from datetime import datetime
 import base64
 from django.contrib.messages import get_messages
+from django.db.models import Q
 
 @require_POST
 @csrf_exempt
@@ -133,8 +134,8 @@ def job_list(request):
     return render(request, 'job_list.html', context)
 
 @login_required
-def progressbar(request, project_id):
-    project = get_object_or_404(Project, pk=project_id)
+def progressbar(request, order_number):
+    project = get_object_or_404(Project, order_number=order_number)
     all_steps = Status.objects.all().order_by('status_id')
     progress = ProjectStatus.objects.filter(project=project)
 
@@ -309,3 +310,10 @@ def get_window_frame(request, frame_id):
         raise Http404("Detail not found")
     
     return HttpResponse(frame.image, content_type='image/*')
+
+def get_project_id(request, order_number):
+    try:
+        project = Project.objects.get(Q(order_number__iexact=order_number))
+        return JsonResponse({"success": True, "project_id": project.project_id})
+    except Project.DoesNotExist:
+        return JsonResponse({"success": False})

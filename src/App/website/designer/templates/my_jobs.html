@@ -26,7 +26,7 @@
             
                     <div class="job-actions">
                         <button class="square-btn small" data-projectId='{{ project.project_id }}' onclick='getPreviews(this)'>Open Project</button>
-                        <a href="{% url 'progressbar' project.project_id %}" class="square-btn small">View Progress</a>
+                        <a href="{% url 'progressbar' project.order_number %}" class="square-btn small">View Progress</a>
                     </div>
                 </div>          
             {% endfor %}
@@ -68,7 +68,7 @@
           `<li>Preview ID: ${p.preview_id} | Date: ${p.save_date} | Final: ${p.final ? "Yes" : "No"}</li>`).join('') + "</ul>";
       }
 
-      list.style.display = "block";
+      list.style.display = "flex";
     }
 
     function closePreviews() {

@@ -11,6 +11,7 @@
     <!-- Inject project ID and edit permissions -->
     <script>
         const PROJECT_ID = "{{ project.project_id }}";
+        const CUSTOMER_EMAIL = "{{ project.customer.email|escapejs }}";
     </script>
 
     {{ progress|json_script:"progress-json" }}

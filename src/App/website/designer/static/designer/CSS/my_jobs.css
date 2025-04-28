@@ -104,7 +104,7 @@ body {
     width: 100%;
 }
   
-/* .square-btn.small {
+.square-btn.small {
     display: inline-flex;
     width: auto;
     height: auto;
@@ -116,29 +116,9 @@ body {
     background: #0000ff;
     color: white;
     text-decoration: none;
-}
-
-.square-btn.small:hover {
-    background: #0c0361;
-}   */
-  
-/* Square Button Small */
-.square-btn.small {
-    display: inline-flex;
-    width: auto;
-    height: auto;
-    padding: 12px 18px; /* Adjust padding to make the button more clickable */
-    font-size: 1em; /* Slightly increase font size for better readability */
-    margin-right: 10px;
-    box-shadow: none;
-    border: none; /* Remove the border to match the View Progress button */
-    border-radius: 6px;
-    background: linear-gradient(to right, #0000ff, #0066ff);
-    color: white;
-    text-decoration: none;
-    transition: background 0.3s ease, transform 0.2s ease-in-out;
-    justify-content: center;
-    align-items: center;
+    border: none;
+    cursor: pointer;
+    font-family: "Jost", sans-serif;
 }
 
 .square-btn.small:hover {
@@ -157,6 +137,9 @@ body {
     justify-content: center; 
     align-items: center; 
     z-index: 2000;
+    padding: 0; /* ADD this */
+    margin: 0;  /* ADD this */
+    box-sizing: border-box; /* ADD this */
 }
 
 /* Popup content container */
@@ -167,46 +150,52 @@ body {
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
     text-align: center;
-    min-width: 300px;
-    max-width: 600px;
+    width: 90%; /* CHANGE from min-width/max-width */
+    max-width: 500px;
     overflow-y: auto;
-    max-height: 70vh; /* Allow scrolling if content exceeds height */
+    max-height: 70vh;
+    box-sizing: border-box; /* ADD this too */
 }
 
 /* Close button */
 .close-btn {
     position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 30px; /* Make the X button large */
+    top: -5px; /* back inside the modal */
+    right: 5px; /* back inside the modal */
+    background: none; /* no background needed now */
+    border: none;
+    padding: 0;
+    font-size: 28px;
     font-weight: bold;
     color: #333;
     cursor: pointer;
-    z-index: 2100; /* Ensure the button is above all content */
+    z-index: 2100;
+    transition: color 0.2s ease;
 }
-
 .close-btn:hover {
     color: #e74c3c; /* Red color on hover */
 }
 
 /* List content */
-#list-text {
-    font-size: 1.2em;
-    color: #333;
-    text-align: left;
-    margin-bottom: 15px;
-}
-
 #list-text ul {
     list-style-type: none;
-    padding-left: 0;
+    padding: 0;
+    margin: 0;
 }
 
 #list-text li {
-    padding: 10px 0;
-    border-bottom: 1px solid #ddd;
-    font-size: 1.1em;
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    background-color: #f5f5f5; /* Light gray background */
+    border-radius: 6px;
+    font-size: 1em;
     color: #333;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s ease;
+}
+
+#list-text li:hover {
+    background-color: #e0e0e0; /* Darker gray on hover */
 }
 
 .open-preview-btn {

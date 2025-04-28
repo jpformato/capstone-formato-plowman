@@ -27,13 +27,16 @@
                         <div class="project-id">Order Number: {{ project.order_number }}</div>                   
                         <div class="job-info">
                             Customer Email: {{ project.customer.email }}<br>
-                            Sales Rep: {{ employees}}
+                            {% if project.employees.all %}
+                               Sales Rep: {{ project.employees.all.0.first_name }} {{ project.employees.all.0.last_name }}
+                            {% else %}
+                               Sales Rep: None
+                            {% endif %}
                         </div>
                     </div>
-
                     <div class="job-actions">
                         <button class="square-btn small" onclick='getPreviews(`{{ project.project_id }}`)'>Open Project</button>
-                        <a href="{% url 'progressbar' project.project_id %}" class="square-btn small">View Progress</a>
+                        <a href="{% url 'progressbar' project.order_number %}" class="square-btn small">View Progress</a>
                     </div>
                 </div>
                           
@@ -76,7 +79,7 @@
             </li>`).join('') + "</ul>";
       }
 
-      list.style.display = "block";
+      list.style.display = "flex";
     }
 
     function closePreviews() {
