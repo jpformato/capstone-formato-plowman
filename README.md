@@ -25,7 +25,7 @@ python manage.py migrate
 
 ## Testing
 To generate the coverage report enter this command in \src\App\website: </br>
-coverage run --branch manage.py test </br>
+coverage run --branch manage.py test designer.tests</br>
 
 To view the coverage report enter this command in the same directory: </br>
 coverage -m report </br>
