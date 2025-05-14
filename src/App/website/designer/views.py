@@ -133,7 +133,6 @@ def job_list(request):
     }
     return render(request, 'job_list.html', context)
 
-@login_required
 def progressbar(request, order_number):
     project = get_object_or_404(Project, order_number=order_number)
     all_steps = Status.objects.all().order_by('status_id')

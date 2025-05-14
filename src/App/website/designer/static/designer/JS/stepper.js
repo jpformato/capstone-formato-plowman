@@ -176,6 +176,7 @@ form.onsubmit = function (e) {
         },
         body: JSON.stringify({
             project_id: PROJECT_ID,
+            order_number: ORDER_NUMBER,
             step_name: document.querySelectorAll(".step-number")[activeStepIndex].textContent.trim(),
             start_date: validStarted ? started : null,
             end_date: validCompleted ? completed : null,
@@ -220,7 +221,7 @@ form.onsubmit = function (e) {
     emailjs.send("service_h71srho", "template_zxuz93z", {
         email: CUSTOMER_EMAIL,  // The person who should receive the email
         reply_to: "jpformato@loyola.edu",  // Shows up when they click Reply
-        project_id: PROJECT_ID,
+        order_number: ORDER_NUMBER,
         update_message: updateMessage,     
     })
     .then((response) => {

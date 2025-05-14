@@ -22,4 +22,4 @@ def load_frames_from_folder(folder_path):
                 )
                 print(f"Saved: {filename}")
 
-load_frames_from_folder("C:/Users/jackf/Documents/School Work/Capstone/capstone-formato-plowman/src/App/website/designer/frame_images")
+load_frames_from_folder("/Users/jackformato/Documents/Capstone/capstone-formato-plowman/src/App/website/designer/frame_images")
